@@ -4,7 +4,7 @@ import authMiddleware from "../middlewares/auth.js";
 
 const messageRoute = express.Router();
 
-messageRoute.post('/:conversationId/messages', authMiddleware, sendMessage);
+messageRoute.post('/:conversationId/messages/send', authMiddleware, sendMessage);
 messageRoute.get('/:conversationId/messages', authMiddleware, getMessages);
 messageRoute.post('/:conversationId/seen', authMiddleware, markSeen);
 

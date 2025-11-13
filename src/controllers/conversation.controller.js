@@ -4,18 +4,36 @@ import User from '../models/User.js';
 export const createConversation = async (req, res) => {
   try {
     const { type, members, title } = req.body; // members: array of userIds
-    if (!type || !members || !Array.isArray(members)) return res.status(400).json({ error: 'Bad request' });
+    if (!type || !members || !Array.isArray(members))
+      return res.status(400).json({ error: 'Bad request' });
 
     // For direct, enforce exactly 2 members
-    if (type === 'direct' && members.length !== 2) return res.status(400).json({ error: 'Direct must have 2 members' });
+    if (type === 'direct' && members.length !== 2)
+      return res.status(400).json({ error: 'Direct must have 2 members' });
 
+    // --- Check if a direct conversation already exists ---
+    if (type === 'direct') {
+      const existingConv = await Conversation.findOne({
+        type: 'direct',
+        'members.userId': { $all: members } // ensures both users are included
+      }).populate('members.userId', 'name email avatarUrl');
+
+      if (existingConv) {
+        return res.json(existingConv); // return existing conversation instead of creating a new one
+      }
+    }
+
+    // Create new conversation
     const conv = await Conversation.create({
       type,
       title: type === 'group' ? title : undefined,
       members: members.map(id => ({ userId: id }))
     });
 
-    res.json(conv);
+    const populatedConv = await Conversation.findById(conv._id)
+      .populate('members.userId', 'name email avatarUrl');
+
+    res.json(populatedConv);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

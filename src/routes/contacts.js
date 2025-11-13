@@ -4,7 +4,8 @@ import authMiddleware from "../middlewares/auth.js";
 
 const contactRoute = express.Router();
 
-contactRoute.post('/add', authMiddleware,addContact);
-contactRoute.get('/', authMiddleware,getContacts);
+contactRoute.post('/contact/add', authMiddleware,addContact);
+contactRoute.get('/contact', authMiddleware,getContacts);
 
 export default contactRoute;
+    

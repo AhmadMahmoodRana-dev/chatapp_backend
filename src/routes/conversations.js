@@ -3,8 +3,8 @@ import { addMember, createConversation, getMyConversations } from '../controller
 import authMiddleware from "../middlewares/auth.js";
 const conversationRoute = express.Router();
 
-conversationRoute.post('/', authMiddleware, createConversation);
-conversationRoute.get('/', authMiddleware, getMyConversations);
+conversationRoute.post('/conversation/add', authMiddleware, createConversation);
+conversationRoute.get('/conversation/get', authMiddleware, getMyConversations);
 conversationRoute.post('/:id/members', authMiddleware, addMember);
 
 export default conversationRoute;
